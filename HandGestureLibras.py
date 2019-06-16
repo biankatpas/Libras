@@ -27,27 +27,26 @@ def main():
         cv2.rectangle(frame, (20, 20), (300, 300), (255, 255, 2), 4)  # outer most rectangle
         ROI = frame[20:300, 20:300]
 
+        # Hand segmentation by movement
         # MOG2 Background Subtraction
         fgmask = ROI
         fgbg.setBackgroundRatio(0.005)
         fgmask = fgbg.apply(ROI, fgmask)
-
         # Noise remove
         kernel = np.ones((5, 5), np.uint8)
         c1 = cv2.morphologyEx(fgmask, cv2.MORPH_CLOSE, kernel)
         c2 = cv2.morphologyEx(c1, cv2.MORPH_CLOSE, kernel)
         closing = cv2.morphologyEx(c2, cv2.MORPH_CLOSE, kernel)
 
+        # Hand segmentation by skin color
         # Blur the image
         #blur = cv2.blur(ROI, (3, 3))
-
         # Convert to HSV color space
         #hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
-
         # Create a binary image with where white will be skin colors and rest is black
         #thresh = cv2.inRange(hsv, np.array([2, 50, 50]), np.array([20, 255, 255]))
-
         #_, thresh = cv2.threshold(fgmask, 75, 255, cv2.THRESH_BINARY);
+
         # Find contours of the filtered frame
         _, contours, hierarchy = cv2.findContours(closing, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         # print(contours)
